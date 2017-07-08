@@ -24,8 +24,6 @@ import (
 	"github.com/golang/glog"
 	"github.com/google/go-microservice-helpers/server"
 	"github.com/google/go-microservice-helpers/tracing"
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
-	"google.golang.org/grpc/reflection"
 
 	pb "github.com/google/lvmd/proto"
 	"github.com/google/lvmd/server"
@@ -48,8 +46,6 @@ func main() {
 	}
 
 	pb.RegisterLVMServer(grpcServer, &svr)
-	reflection.Register(grpcServer)
-	grpc_prometheus.Register(grpcServer)
 
 	err = serverhelpers.ListenAndServe(grpcServer, nil)
 	if err != nil {
