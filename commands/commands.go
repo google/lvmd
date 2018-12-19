@@ -82,7 +82,7 @@ func CreateLV(ctx context.Context, vg string, name string, size uint64, mirrors 
 	return string(out), err
 }
 
-// ProtectedTagName is a tag that prevents RemoveLV from removing a volume
+// ProtectedTagName is a tag that prevents RemoveLV & RemoveVG from removing a volume
 const ProtectedTagName = "protected"
 
 // RemoveLV removes a volume
@@ -119,6 +119,78 @@ func CloneLV(ctx context.Context, src, dest string) (string, error) {
 	defer sp.Finish()
 
 	cmd := exec.Command("dd", fmt.Sprintf("if=%s", src), fmt.Sprintf("of=%s", dest), "bs=4M")
+	out, err := cmd.CombinedOutput()
+	return string(out), err
+}
+
+func ListVG(ctx context.Context) ([]*parser.VG, error) {
+	sp, _ := opentracing.StartSpanFromContext(ctx, "lvm.vgs")
+	sp.SetTag("component", "lvm")
+	sp.SetTag("span.kind", "client")
+	defer sp.Finish()
+
+	cmd := exec.Command("vgs", "--units=b", "--separator=<:SEP:>", "--nosuffix", "--noheadings",
+		"-o", "vg_name,vg_size,vg_free,vg_uuid,vg_tags", "--nameprefixes", "-a")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return nil, err
+	}
+	outStr := strings.TrimSpace(string(out))
+	outLines := strings.Split(outStr, "\n")
+	vgs := make([]*parser.VG, len(outLines))
+	for i, line := range outLines {
+		line = strings.TrimSpace(line)
+		vg, err := parser.ParseVG(line)
+		if err != nil {
+			return nil, err
+		}
+		vgs[i] = vg
+	}
+	return vgs, nil
+}
+
+func CreateVG(ctx context.Context, name string, physicalVolume string, tags []string) (string, error) {
+	sp, _ := opentracing.StartSpanFromContext(ctx, "lvm.vgcreate")
+	sp.SetTag("component", "lvm")
+	sp.SetTag("span.kind", "client")
+	defer sp.Finish()
+
+	args := []string{name, physicalVolume, "-v"}
+	for _, tag := range tags {
+		args = append(args, "--add-tag", tag)
+	}
+	cmd := exec.Command("vgcreate", args...)
+	out, err := cmd.CombinedOutput()
+	return string(out), err
+}
+
+func RemoveVG(ctx context.Context, name string) (string, error) {
+	vgs, err := ListVG(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to list VGs: %v", err)
+	}
+	var vg *parser.VG
+	for _, v := range vgs {
+		if v.Name == name {
+			vg = v
+			break
+		}
+	}
+	if vg == nil {
+		return "", fmt.Errorf("could not find vg to delete")
+	}
+	for _, tag := range vg.Tags {
+		if tag == ProtectedTagName {
+			return "", errors.New("volume is protected")
+		}
+	}
+
+	sp, _ := opentracing.StartSpanFromContext(ctx, "lvm.vgremove")
+	sp.SetTag("component", "lvm")
+	sp.SetTag("span.kind", "client")
+	defer sp.Finish()
+
+	cmd := exec.Command("vgremove", "-v", "-f", name)
 	out, err := cmd.CombinedOutput()
 	return string(out), err
 }

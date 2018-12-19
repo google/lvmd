@@ -69,3 +69,32 @@ func (s Server) CloneLV(ctx context.Context, in *pb.CloneLVRequest) (*pb.CloneLV
 	}
 	return &pb.CloneLVReply{CommandOutput: log}, nil
 }
+
+func (s Server) ListVG(ctx context.Context, in *pb.ListVGRequest) (*pb.ListVGReply, error) {
+	vgs, err := commands.ListVG(ctx)
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, "failed to list LVs: %v", err)
+	}
+
+	pbvgs := make([]*pb.VolumeGroup, len(vgs))
+	for i, v := range vgs {
+		pbvgs[i] = v.ToProto()
+	}
+	return &pb.ListVGReply{VolumeGroups: pbvgs}, nil
+}
+
+func (s Server) CreateVG(ctx context.Context, in *pb.CreateVGRequest) (*pb.CreateVGReply, error) {
+	log, err := commands.CreateVG(ctx, in.Name, in.PhysicalVolume, in.Tags)
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, "failed to create vg: %v", err)
+	}
+	return &pb.CreateVGReply{CommandOutput: log}, nil
+}
+
+func (s Server) RemoveVG(ctx context.Context, in *pb.CreateVGRequest) (*pb.RemoveVGReply, error) {
+	log, err := commands.RemoveVG(ctx, in.Name)
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, "failed to remove vg: %v", err)
+	}
+	return &pb.RemoveVGReply{CommandOutput: log}, nil
+}
