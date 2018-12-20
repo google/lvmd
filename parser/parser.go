@@ -275,6 +275,14 @@ type LV struct {
 	Tags               []string
 }
 
+type VG struct {
+	Name     string
+	Size     uint64
+	FreeSize uint64
+	UUID     string
+	Tags     []string
+}
+
 // ToProto returns lvm.LogicalVolume representation of struct
 func (lv LV) ToProto() *pb.LogicalVolume {
 	return &pb.LogicalVolume{
@@ -289,14 +297,20 @@ func (lv LV) ToProto() *pb.LogicalVolume {
 	}
 }
 
-// ParseLV parses a line from lvs
-func ParseLV(line string) (*LV, error) {
-	// lvs --units=b --separator="<:SEP:>" --nosuffix --noheadings -o lv_name,lv_size,lv_uuid,lv_attr,copy_percent,lv_kernel_major,lv_kernel_minor,lv_tags --nameprefixes -a
-	// todo: devices, lv_ancestors, lv_descendants, lv_major, lv_minor, mirror_log, modules, move_pv, origin, region_size
-	//       seg_count, seg_size, seg_start, seg_tags, segtype, snap_percent, stripes, stripe_size
+func (vg VG) ToProto() *pb.VolumeGroup {
+	return &pb.VolumeGroup{
+		Name:     vg.Name,
+		Size:     vg.Size,
+		FreeSize: vg.FreeSize,
+		Uuid:     vg.UUID,
+		Tags:     vg.Tags,
+	}
+}
+
+func parse(line string, numComponents int) (map[string]string, error) {
 	components := strings.Split(line, separator)
-	if len(components) != 8 {
-		return nil, fmt.Errorf("expected 8 components, got %d", len(components))
+	if len(components) != numComponents {
+		return nil, fmt.Errorf("expected %d components, got %d", numComponents, len(components))
 	}
 
 	fields := map[string]string{}
@@ -315,6 +329,19 @@ func ParseLV(line string) (*LV, error) {
 		}
 		value = value[1 : len(value)-1]
 		fields[key] = value
+	}
+
+	return fields, nil
+}
+
+// ParseLV parses a line from lvs
+func ParseLV(line string) (*LV, error) {
+	// lvs --units=b --separator="<:SEP:>" --nosuffix --noheadings -o lv_name,lv_size,lv_uuid,lv_attr,copy_percent,lv_kernel_major,lv_kernel_minor,lv_tags --nameprefixes -a
+	// todo: devices, lv_ancestors, lv_descendants, lv_major, lv_minor, mirror_log, modules, move_pv, origin, region_size
+	//       seg_count, seg_size, seg_start, seg_tags, segtype, snap_percent, stripes, stripe_size
+	fields, err := parse(line, 8)
+	if err != nil {
+		return nil, err
 	}
 
 	size, err := strconv.ParseUint(fields["LVM2_LV_SIZE"], 10, 64)
@@ -346,6 +373,32 @@ func ParseLV(line string) (*LV, error) {
 		ActualDevMajNumber: uint32(kernelMajNumber),
 		ActualDevMinNumber: uint32(kernelMinNumber),
 		Tags:               strings.Split(fields["LVM2_LV_TAGS"], ","),
+	}, nil
+}
+
+func ParseVG(line string) (*VG, error) {
+	// vgs --units=b --separator="<:SEP:>" --nosuffix --noheadings -o vg_name,vg_size,vg_free,vg_uuid,vg_tags --nameprefixes -a
+	fields, err := parse(line, 5)
+	if err != nil {
+		return nil, err
+	}
+
+	size, err := strconv.ParseUint(fields["LVM2_VG_SIZE"], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	freeSize, err := strconv.ParseUint(fields["LVM2_VG_FREE"], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	return &VG{
+		Name:     fields["LVM2_VG_NAME"],
+		Size:     size,
+		FreeSize: freeSize,
+		UUID:     fields["LVM2_VG_UUID"],
+		Tags:     strings.Split(fields["LVM2_VG_TAGS"], ","),
 	}, nil
 }
 

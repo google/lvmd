@@ -104,6 +104,15 @@ message LogicalVolume {
   repeated string tags = 8;
 }
 
+message VolumeGroup {
+  string name = 1;
+  uint64 size = 2;
+  uint64 free_size = 3;
+  string uuid = 4;
+
+  repeated string tags = 5;
+}
+
 message ListLVRequest {
   string volume_group = 1;
 }
@@ -142,9 +151,36 @@ message CloneLVReply {
   string command_output = 1;
 }
 
+message ListVGRequest {}
+message ListVGReply {
+  repeated VolumeGroup volume_groups = 1;
+}
+
+message CreateVGRequest {
+  string name = 1;
+  string physical_volume = 2;
+  repeated string tags = 3;
+}
+
+message CreateVGReply {
+  string command_output = 1;
+}
+
+message RemoveVGRequest {
+  string name = 1;
+}
+
+message RemoveVGReply {
+  string command_output = 1;
+}
+
 service LVM {
  rpc ListLV(ListLVRequest) returns (ListLVReply) {}
  rpc CreateLV(CreateLVRequest) returns (CreateLVReply) {}
  rpc RemoveLV(RemoveLVRequest) returns (RemoveLVReply) {}
  rpc CloneLV(CloneLVRequest) returns (CloneLVReply) {}
+
+ rpc ListVG(ListVGRequest) returns (ListVGReply) {}
+ rpc CreateVG(CreateVGRequest) returns (CreateVGReply) {}
+ rpc RemoveVG(CreateVGRequest) returns (RemoveVGReply) {}
 }
