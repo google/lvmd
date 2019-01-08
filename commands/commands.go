@@ -194,3 +194,57 @@ func RemoveVG(ctx context.Context, name string) (string, error) {
 	out, err := cmd.CombinedOutput()
 	return string(out), err
 }
+
+func AddTagLV(ctx context.Context, vg string, name string, tags []string) (string, error) {
+	sp, _ := opentracing.StartSpanFromContext(ctx, "lvm.addtaglv")
+	sp.SetTag("component", "lvm")
+	sp.SetTag("span.kind", "client")
+	defer sp.Finish()
+
+	lvs, err := ListLV(ctx, fmt.Sprintf("%s/%s", vg, name))
+	if err != nil {
+		return "", fmt.Errorf("failed to list LVs: %v", err)
+	}
+	if len(lvs) != 1 {
+		return "", fmt.Errorf("expected 1 LV, got %d", len(lvs))
+	}
+
+	args := make([]string, 0)
+
+	for _, tag := range tags {
+		args = append(args, "--addtag", tag)
+	}
+
+	args = append(args, fmt.Sprintf("%s/%s", vg, name))
+
+	cmd := exec.Command("lvchange", args...)
+	out, err := cmd.CombinedOutput()
+	return string(out), err
+}
+
+func RemoveTagLV(ctx context.Context, vg string, name string, tags []string) (string, error) {
+	sp, _ := opentracing.StartSpanFromContext(ctx, "lvm.removetaglv")
+	sp.SetTag("component", "lvm")
+	sp.SetTag("span.kind", "client")
+	defer sp.Finish()
+
+	lvs, err := ListLV(ctx, fmt.Sprintf("%s/%s", vg, name))
+	if err != nil {
+		return "", fmt.Errorf("failed to list LVs: %v", err)
+	}
+	if len(lvs) != 1 {
+		return "", fmt.Errorf("expected 1 LV, got %d", len(lvs))
+	}
+
+	args := make([]string, 0)
+
+	for _, tag := range tags {
+		args = append(args, "--deltag", tag)
+	}
+
+	args = append(args, fmt.Sprintf("%s/%s", vg, name))
+
+	cmd := exec.Command("lvchange", args...)
+	out, err := cmd.CombinedOutput()
+	return string(out), err
+}

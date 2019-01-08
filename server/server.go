@@ -98,3 +98,19 @@ func (s Server) RemoveVG(ctx context.Context, in *pb.CreateVGRequest) (*pb.Remov
 	}
 	return &pb.RemoveVGReply{CommandOutput: log}, nil
 }
+
+func (s Server) AddTagLV(ctx context.Context, in *pb.AddTagLVRequest) (*pb.AddTagLVReply, error) {
+	log, err := commands.AddTagLV(ctx, in.VolumeGroup, in.Name, in.Tags)
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, "failed to add tags to lv: %v", err)
+	}
+	return &pb.AddTagLVReply{CommandOutput: log}, nil
+}
+
+func (s Server) RemoveTagLV(ctx context.Context, in *pb.RemoveTagLVRequest) (*pb.RemoveTagLVReply, error) {
+	log, err := commands.RemoveTagLV(ctx, in.VolumeGroup, in.Name, in.Tags)
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, "failed to remove tags from lv: %v", err)
+	}
+	return &pb.RemoveTagLVReply{CommandOutput: log}, nil
+}

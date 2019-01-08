@@ -174,11 +174,34 @@ message RemoveVGReply {
   string command_output = 1;
 }
 
+message AddTagLVRequest {
+  string volume_group = 1;
+  string name = 2;
+  repeated string tags = 3;
+}
+
+message AddTagLVReply {
+  string command_output = 1;
+}
+
+message RemoveTagLVRequest {
+  string volume_group = 1;
+  string name = 2;
+  repeated string tags = 3;
+}
+
+message RemoveTagLVReply {
+  string command_output = 1;
+}
+
 service LVM {
  rpc ListLV(ListLVRequest) returns (ListLVReply) {}
  rpc CreateLV(CreateLVRequest) returns (CreateLVReply) {}
  rpc RemoveLV(RemoveLVRequest) returns (RemoveLVReply) {}
  rpc CloneLV(CloneLVRequest) returns (CloneLVReply) {}
+
+ rpc AddTagLV(AddTagLVRequest) returns (AddTagLVReply) {}
+ rpc RemoveTagLV(RemoveTagLVRequest) returns (RemoveTagLVReply) {}
 
  rpc ListVG(ListVGRequest) returns (ListVGReply) {}
  rpc CreateVG(CreateVGRequest) returns (CreateVGReply) {}
