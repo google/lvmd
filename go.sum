@@ -1,3 +1,6 @@
+//github.com/apache/thrift v0.0.0-20181217171848-56ac72e74ae3 h1:0bnL0g/caxoso3UhQPjYF8SCxx0bhzJnC3SeHnyKMoU=
+//github.com/apache/thrift v0.0.0-20181217171848-56ac72e74ae3/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
+//github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 h1:Iju5GlWwrvL6UBg4zJJt3btmonfrMlCDdsejg4CZE7c=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/DataDog/zstd v1.3.4 h1:LAGHkXuvC6yky+C2CUG2tD7w8QlrUwpue8XwIh0X4AY=
 github.com/DataDog/zstd v1.3.4/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
@@ -5,7 +8,7 @@ github.com/Shopify/sarama v1.20.0 h1:wAMHhl1lGRlobeoV/xOKpbqD2OQsOvY4A/vIOGroIe8
 github.com/Shopify/sarama v1.20.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.3+incompatible h1:awiJqUYH4q4OmoBiRccJykjd7B+w0loJi2keSna4X/M=
 github.com/Shopify/toxiproxy v2.1.3+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
-github.com/apache/thrift v0.0.0-20181217171848-56ac72e74ae3 h1:0bnL0g/caxoso3UhQPjYF8SCxx0bhzJnC3SeHnyKMoU=
+github.com/apache/thrift v0.0.0-20181217171848-56ac72e74ae3 h1:3eCDtvUVYYF/ru4C4gNTN+MdklfV42BigzFWc4xDY4E=
 github.com/apache/thrift v0.0.0-20181217171848-56ac72e74ae3/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 h1:xJ4a3vCFaGF/jqvzLMYoU8P317H5OQ+Via4RmuPwCS0=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
@@ -35,7 +38,7 @@ github.com/google/credstore v0.0.0-20181218150457-e184c60ef875 h1:7EiaRUOaJuWKBc
 github.com/google/credstore v0.0.0-20181218150457-e184c60ef875/go.mod h1:l7D6/mhvFUAR6eapBoXqACeHhx7P5lnDeT2eYu0ZvkY=
 github.com/google/go-microservice-helpers v0.0.0-20170611213619-4a88aaa13aa1 h1:vqwVbEOWA+K+sAHbF3DoxHUEZQ1kZ3oWXvz1oJGapKA=
 github.com/google/go-microservice-helpers v0.0.0-20170611213619-4a88aaa13aa1/go.mod h1:CRQ7hS5Tr5dVEHYs6JhcdygxqlhDxiPmYvZGQDyeZvM=
-github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 h1:Iju5GlWwrvL6UBg4zJJt3btmonfrMlCDdsejg4CZE7c=
+github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 h1:BWIsLfhgKhV5g/oF34aRjniBHLTZe5DNekSjbAjIS6c=
 github.com/grpc-ecosystem/go-grpc-middleware v1.0.0/go.mod h1:FiyG127CGDf3tlThmgyCl78X/SZQqEOJBCDaAfeWzPs=
 github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 h1:Ovs26xHkKqVztRpIrF/92BcuyuQ/YW4NSIpoGtfXNho=
 github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=
