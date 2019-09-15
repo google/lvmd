@@ -201,8 +201,6 @@ func (t VolumeZeroing) toProto() bool {
 // VolumeHealth is volume health
 type VolumeHealth rune
 
-var volumeHealthKeys = []byte("-prmw")
-
 // health
 const (
 	VolumeHealthOK              VolumeHealth = '-'
@@ -320,7 +318,7 @@ func parse(line string, numComponents int) (map[string]string, error) {
 			return nil, fmt.Errorf("failed to parse component '%s'", c)
 		}
 		key := c[0:idx]
-		value := c[idx+1 : len(c)]
+		value := c[idx+1:]
 		if len(value) < 2 {
 			return nil, fmt.Errorf("failed to parse component '%s'", c)
 		}
