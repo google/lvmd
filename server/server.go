@@ -21,8 +21,8 @@ package server
 import (
 	"github.com/google/lvmd/commands"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pb "github.com/google/lvmd/proto"
 )
@@ -36,7 +36,7 @@ func NewServer() Server {
 func (s Server) ListLV(ctx context.Context, in *pb.ListLVRequest) (*pb.ListLVReply, error) {
 	lvs, err := commands.ListLV(ctx, in.VolumeGroup)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "failed to list LVs: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to list LVs: %v", err)
 	}
 
 	pblvs := make([]*pb.LogicalVolume, len(lvs))
@@ -49,7 +49,7 @@ func (s Server) ListLV(ctx context.Context, in *pb.ListLVRequest) (*pb.ListLVRep
 func (s Server) CreateLV(ctx context.Context, in *pb.CreateLVRequest) (*pb.CreateLVReply, error) {
 	log, err := commands.CreateLV(ctx, in.VolumeGroup, in.Name, in.Size, in.Mirrors, in.Tags)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "failed to create lv: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to create lv: %v", err)
 	}
 	return &pb.CreateLVReply{CommandOutput: log}, nil
 }
@@ -57,7 +57,7 @@ func (s Server) CreateLV(ctx context.Context, in *pb.CreateLVRequest) (*pb.Creat
 func (s Server) RemoveLV(ctx context.Context, in *pb.RemoveLVRequest) (*pb.RemoveLVReply, error) {
 	log, err := commands.RemoveLV(ctx, in.VolumeGroup, in.Name)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "failed to remove lv: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to remove lv: %v", err)
 	}
 	return &pb.RemoveLVReply{CommandOutput: log}, nil
 }
@@ -65,7 +65,7 @@ func (s Server) RemoveLV(ctx context.Context, in *pb.RemoveLVRequest) (*pb.Remov
 func (s Server) CloneLV(ctx context.Context, in *pb.CloneLVRequest) (*pb.CloneLVReply, error) {
 	log, err := commands.CloneLV(ctx, in.SourceName, in.DestName)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "failed to clone lv: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to clone lv: %v", err)
 	}
 	return &pb.CloneLVReply{CommandOutput: log}, nil
 }
@@ -73,7 +73,7 @@ func (s Server) CloneLV(ctx context.Context, in *pb.CloneLVRequest) (*pb.CloneLV
 func (s Server) ListVG(ctx context.Context, in *pb.ListVGRequest) (*pb.ListVGReply, error) {
 	vgs, err := commands.ListVG(ctx)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "failed to list LVs: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to list LVs: %v", err)
 	}
 
 	pbvgs := make([]*pb.VolumeGroup, len(vgs))
@@ -86,7 +86,7 @@ func (s Server) ListVG(ctx context.Context, in *pb.ListVGRequest) (*pb.ListVGRep
 func (s Server) CreateVG(ctx context.Context, in *pb.CreateVGRequest) (*pb.CreateVGReply, error) {
 	log, err := commands.CreateVG(ctx, in.Name, in.PhysicalVolume, in.Tags)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "failed to create vg: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to create vg: %v", err)
 	}
 	return &pb.CreateVGReply{CommandOutput: log}, nil
 }
@@ -94,7 +94,7 @@ func (s Server) CreateVG(ctx context.Context, in *pb.CreateVGRequest) (*pb.Creat
 func (s Server) RemoveVG(ctx context.Context, in *pb.CreateVGRequest) (*pb.RemoveVGReply, error) {
 	log, err := commands.RemoveVG(ctx, in.Name)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "failed to remove vg: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to remove vg: %v", err)
 	}
 	return &pb.RemoveVGReply{CommandOutput: log}, nil
 }
@@ -102,7 +102,7 @@ func (s Server) RemoveVG(ctx context.Context, in *pb.CreateVGRequest) (*pb.Remov
 func (s Server) AddTagLV(ctx context.Context, in *pb.AddTagLVRequest) (*pb.AddTagLVReply, error) {
 	log, err := commands.AddTagLV(ctx, in.VolumeGroup, in.Name, in.Tags)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "failed to add tags to lv: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to add tags to lv: %v", err)
 	}
 	return &pb.AddTagLVReply{CommandOutput: log}, nil
 }
@@ -110,7 +110,7 @@ func (s Server) AddTagLV(ctx context.Context, in *pb.AddTagLVRequest) (*pb.AddTa
 func (s Server) RemoveTagLV(ctx context.Context, in *pb.RemoveTagLVRequest) (*pb.RemoveTagLVReply, error) {
 	log, err := commands.RemoveTagLV(ctx, in.VolumeGroup, in.Name, in.Tags)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "failed to remove tags from lv: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to remove tags from lv: %v", err)
 	}
 	return &pb.RemoveTagLVReply{CommandOutput: log}, nil
 }
