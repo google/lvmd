@@ -248,34 +248,3 @@ func RemoveTagLV(ctx context.Context, vg string, name string, tags []string) (st
 	out, err := cmd.CombinedOutput()
 	return string(out), err
 }
-
-// FindVGbyLV VG name in which particular LV exists
-func FindVGbyLV(ctx context.Context, volId string) (vgName *string, err error) {
-	sp, _ := opentracing.StartSpanFromContext(ctx, "lvm.findvgbylv")
-	sp.SetTag("component", "lvm")
-	sp.SetTag("span.kind", "client")
-	defer sp.Finish()
-
-	cmd := exec.Command("lvs", "--units=b", "--separator=<:SEP:>", "--nosuffix", "--noheadings",
-		"-o", "lv_name,lv_size,lv_uuid,lv_attr,copy_percent,lv_kernel_major,lv_kernel_minor,lv_tags,vg_name", "--nameprefixes", "-a")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		return nil, err
-	}
-	outStr := strings.TrimSpace(string(out))
-	outLines := strings.Split(outStr, "\n")
-	lvs := make([]*parser.LV, len(outLines))
-	for i, line := range outLines {
-		line = strings.TrimSpace(line)
-		lv, err := parser.ParseLV(line)
-		if err != nil {
-			return nil, err
-		}
-		lvs[i] = lv
-		if lv.VGName != volId {
-			continue
-		}
-		return &lv.VGName, nil
-	}
-	return nil, err
-}

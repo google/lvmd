@@ -115,12 +115,3 @@ func (s Server) RemoveTagLV(ctx context.Context, in *pb.RemoveTagLVRequest) (*pb
 	}
 	return &pb.RemoveTagLVReply{CommandOutput: log}, nil
 }
-
-func (s Server) FindVGbyLV(ctx context.Context, in *pb.FindVGbyLVRequest) (*pb.FindVGbyLVReply, error) {
-	vgName, err := commands.FindVGbyLV(ctx, in.VolumeId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to list LVs: %v", err)
-	}
-
-	return &pb.FindVGbyLVReply{VolumeGroup: *vgName}, nil
-}
