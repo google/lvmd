@@ -293,6 +293,7 @@ func (lv LV) ToProto() *pb.LogicalVolume {
 		ActualDevMajorNumber: lv.ActualDevMajNumber,
 		ActualDevMinorNumber: lv.ActualDevMinNumber,
 		Tags:                 lv.Tags,
+		VGName:               lv.VGName,
 	}
 }
 
