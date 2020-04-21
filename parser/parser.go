@@ -271,6 +271,7 @@ type LV struct {
 	ActualDevMajNumber uint32
 	ActualDevMinNumber uint32
 	Tags               []string
+	VGName             string
 }
 
 type VG struct {
@@ -334,10 +335,10 @@ func parse(line string, numComponents int) (map[string]string, error) {
 
 // ParseLV parses a line from lvs
 func ParseLV(line string) (*LV, error) {
-	// lvs --units=b --separator="<:SEP:>" --nosuffix --noheadings -o lv_name,lv_size,lv_uuid,lv_attr,copy_percent,lv_kernel_major,lv_kernel_minor,lv_tags --nameprefixes -a
+	// lvs --units=b --separator="<:SEP:>" --nosuffix --noheadings -o lv_name,lv_size,lv_uuid,lv_attr,copy_percent,lv_kernel_major,lv_kernel_minor,lv_tags,vg_name --nameprefixes -a
 	// todo: devices, lv_ancestors, lv_descendants, lv_major, lv_minor, mirror_log, modules, move_pv, origin, region_size
 	//       seg_count, seg_size, seg_start, seg_tags, segtype, snap_percent, stripes, stripe_size
-	fields, err := parse(line, 8)
+	fields, err := parse(line, 9)
 	if err != nil {
 		return nil, err
 	}
@@ -371,6 +372,7 @@ func ParseLV(line string) (*LV, error) {
 		ActualDevMajNumber: uint32(kernelMajNumber),
 		ActualDevMinNumber: uint32(kernelMinNumber),
 		Tags:               strings.Split(fields["LVM2_LV_TAGS"], ","),
+		VGName:             fields["LVM2_VG_NAME"],
 	}, nil
 }
 

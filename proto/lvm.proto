@@ -121,6 +121,14 @@ message ListLVReply {
   repeated LogicalVolume volumes = 1;
 }
 
+message FindVGbyLVRequest {
+  string volume_id = 1;
+}
+
+message FindVGbyLVReply {
+  string volume_group = 1;
+}
+
 message CreateLVRequest {
   string volume_group = 1;
   string name = 2;

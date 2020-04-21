@@ -19,10 +19,11 @@ limitations under the License.
 package server
 
 import (
-	"github.com/google/lvmd/commands"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/google/lvmd/commands"
 
 	pb "github.com/google/lvmd/proto"
 )
@@ -113,4 +114,13 @@ func (s Server) RemoveTagLV(ctx context.Context, in *pb.RemoveTagLVRequest) (*pb
 		return nil, status.Errorf(codes.Internal, "failed to remove tags from lv: %v", err)
 	}
 	return &pb.RemoveTagLVReply{CommandOutput: log}, nil
+}
+
+func (s Server) FindVGbyLV(ctx context.Context, in *pb.FindVGbyLVRequest) (*pb.FindVGbyLVReply, error) {
+	vgName, err := commands.FindVGbyLV(ctx, in.VolumeId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to list LVs: %v", err)
+	}
+
+	return &pb.FindVGbyLVReply{VolumeGroup: *vgName}, nil
 }
