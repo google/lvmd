@@ -102,6 +102,7 @@ message LogicalVolume {
   uint32 actual_dev_major_number = 6;
   uint32 actual_dev_minor_number = 7;
   repeated string tags = 8;
+  string vg_name = 9;
 }
 
 message VolumeGroup {

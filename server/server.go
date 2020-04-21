@@ -19,10 +19,11 @@ limitations under the License.
 package server
 
 import (
-	"github.com/google/lvmd/commands"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/google/lvmd/commands"
 
 	pb "github.com/google/lvmd/proto"
 )
